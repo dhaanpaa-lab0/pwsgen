@@ -14,7 +14,6 @@ import (
 var (
 	//go:embed words.txt
 	wordFile []byte
-	words    []string
 )
 
 func TitleCaseWord(s string) string {
@@ -22,8 +21,16 @@ func TitleCaseWord(s string) string {
 	return caser.String(s)
 }
 
-func main() {
+func GetRandomWord(wordsList []string) string {
+	wordFileCount := len(wordsList)
+	s1 := rand.NewSource(time.Now().UnixNano())
+	r1 := rand.New(s1)
+	randomWord := TitleCaseWord(wordsList[r1.Intn(wordFileCount)])
+	return randomWord
+}
 
+func GetWordsList() []string {
+	var words []string
 	wordFileLines := bytes.Split(wordFile, []byte{'\n'})
 	for _, w := range wordFileLines {
 		word := strings.TrimSpace(string(w))
@@ -32,11 +39,13 @@ func main() {
 		}
 
 	}
+	return words
+}
 
+func main() {
+
+	wordList := GetWordsList()
 	// Post Process
-	wordFileCount := len(words)
-	s1 := rand.NewSource(time.Now().UnixNano())
-	r1 := rand.New(s1)
-	randomWord := TitleCaseWord(words[r1.Intn(wordFileCount)])
-	fmt.Println(randomWord)
+
+	fmt.Println(GetRandomWord(wordList))
 }
